@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,8 +25,12 @@ import mx.com.qtx.entidades.Saludo;
 
 @RestController
 public class ApiEjemplo {
+	private static int nPeticion = 0;
 	
 	private static Logger log = LoggerFactory.getLogger(ApiEjemplo.class);
+	
+	@Autowired
+	private Environment env;
 	
 	@GetMapping(path="/saludo", produces = MediaType.TEXT_PLAIN_VALUE)
 	public String saludar() {
@@ -48,18 +54,22 @@ public class ApiEjemplo {
 	
 	@GetMapping(path="/saludo/json/{nombre}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Saludo generarSaludo(@PathVariable String nombre) {
+		nPeticion++;
 		Saludo saludo = new Saludo("Hola",nombre);
-		
+		saludo.setLog("(" + nPeticion + ") GET /saludo/json/{nombre} en puerto " + env.getProperty("server.port"));
 		return saludo;
 	
 	}
 	@GetMapping(path="/saludos", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Saludo> generarSaludos() {
+		nPeticion++;
+		String observacion ="(" + nPeticion + ") GET /saludos en puerto " + env.getProperty("server.port");
+
 		List<Saludo> listSaludos = new ArrayList<>();
-		listSaludos.add(new Saludo("Hola","Betty"));
-		listSaludos.add(new Saludo("Buenos días","Jaime"));
-		listSaludos.add(new Saludo("Buenas tardes","Pedro"));
-		listSaludos.add(new Saludo("Buenas noches","Lorena"));
+		listSaludos.add(new Saludo("Hola","Betty",observacion));
+		listSaludos.add(new Saludo("Buenos días","Jaime",observacion));
+		listSaludos.add(new Saludo("Buenas tardes","Pedro",observacion));
+		listSaludos.add(new Saludo("Buenas noches","Lorena",observacion));
 		
 		return listSaludos;
 	
