@@ -62,7 +62,12 @@ public class ApiEjemplo {
 	}
 	@GetMapping(path="/saludos", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Saludo> generarSaludos() {
+		
 		nPeticion++;
+		
+		if(nPeticion%3 == 0) {
+			hacerPausa(1500);
+		}
 		String observacion ="(" + nPeticion + ") GET /saludos en puerto " + env.getProperty("server.port");
 
 		List<Saludo> listSaludos = new ArrayList<>();
@@ -75,6 +80,14 @@ public class ApiEjemplo {
 	
 	}
 	
+	private void hacerPausa(int milis) {
+		try {
+			Thread.sleep(milis);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@GetMapping(path = "/saludo/xml/{nombre}",  
 			produces = { MediaType.APPLICATION_XML_VALUE, 
 					     MediaType.APPLICATION_JSON_VALUE})
